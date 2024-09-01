@@ -63,7 +63,6 @@ def getMarketCapitalization(serp):
     for element in elements:
         li = element.find_all('li')
         if (len(li) < 3): continue
-        if len(li) == 0: continue
         label = li[3].find('b').text  
         if (label == 'Vốn hóa thị trường'): 
             return li[3].find('div', attrs={'class': 'r'}).text.strip()
