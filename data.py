@@ -7,13 +7,19 @@ def get(code, headers):
     data = [0] * len(headers)
     # Code
     data[0] = code
+    serp = getSerpByCode(code)
     # Market Capitalization
     try:
-        serp = getSerpByCode(code)
         data[1] = getMarketCapitalization(serp)
     except:
-        print(code)
         data[1] = 0
+    # State Capital
+    try:
+        blockHoder = getBlockHolder(code)
+    except:
+        blockHoder = getBlockHolderBySerp(serp)
+    data[2] = blockHoder[0]
+    data[3] = blockHoder[1]
         
     # Other
     url = "https://s.cafef.vn/Ajax/HoSoCongTy.aspx?symbol="+ code + "&Type=2&PageIndex=0&PageSize=4"
@@ -66,3 +72,25 @@ def getMarketCapitalization(serp):
         label = li[3].find('b').text  
         if (label == 'Vốn hóa thị trường'): 
             return li[3].find('div', attrs={'class': 'r'}).text.strip()
+        
+def getBlockHolder(code):
+    try:
+        url = 'https://s.cafef.vn/Ajax/CongTy/BanLanhDao.aspx?sym='
+        serp = BeautifulSoup(requests.get(url + code).content, 'html.parser')
+        d_sh = serp.find(id='divViewCoDongLon')
+        tr_elements = d_sh.find_all('tr')
+        td_elements = tr_elements[4].find_all('td')
+        return [td_elements[0].text.strip(), td_elements[2].text.strip() + '%']
+    except:
+        pass
+    return ['', '0%']
+
+def getBlockHolderBySerp(serp):
+    try: 
+        d_sh = serp.find(id='dvSH')
+        tr_elements = d_sh.find_all('tr')
+        td_elements = tr_elements[1].find_all('td')
+        return [td_elements[0].text.strip(), td_elements[1].text.strip()]
+    except:
+        pass
+    return ['', '0%']

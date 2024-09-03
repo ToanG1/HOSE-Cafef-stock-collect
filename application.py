@@ -1,7 +1,7 @@
 import openpyxl
-import stockData, data
+import stockData
 
-headers = ['Mã cổ phiếu', 'Vốn hóa']
+headers = ['Mã cổ phiếu', 'Vốn hóa', 'Cổ đông lớn', 'Tỷ lệ']
 
 workbook = openpyxl.Workbook()
 sheet = workbook.active
