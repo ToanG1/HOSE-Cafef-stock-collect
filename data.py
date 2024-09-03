@@ -17,7 +17,10 @@ def get(code, headers):
     try:
         blockHoder = getBlockHolder(code)
     except:
-        blockHoder = getBlockHolderBySerp(serp)
+        try:
+            blockHoder = getBlockHolderBySerp(serp)
+        except:
+            blockHoder = ['-', '-']
     data[2] = blockHoder[0]
     data[3] = blockHoder[1]
         
@@ -74,23 +77,15 @@ def getMarketCapitalization(serp):
             return li[3].find('div', attrs={'class': 'r'}).text.strip()
         
 def getBlockHolder(code):
-    try:
-        url = 'https://s.cafef.vn/Ajax/CongTy/BanLanhDao.aspx?sym='
-        serp = BeautifulSoup(requests.get(url + code).content, 'html.parser')
-        d_sh = serp.find(id='divViewCoDongLon')
-        tr_elements = d_sh.find_all('tr')
-        td_elements = tr_elements[4].find_all('td')
-        return [td_elements[0].text.strip(), td_elements[2].text.strip() + '%']
-    except:
-        pass
-    return ['', '0%']
+    url = 'https://s.cafef.vn/Ajax/CongTy/BanLanhDao.aspx?sym='
+    serp = BeautifulSoup(requests.get(url + code).content, 'html.parser')
+    d_sh = serp.find(id='divViewCoDongLon')
+    tr_elements = d_sh.find_all('tr')
+    td_elements = tr_elements[4].find_all('td')
+    return [td_elements[0].text.strip(), td_elements[2].text.strip() + '%']
 
 def getBlockHolderBySerp(serp):
-    try: 
-        d_sh = serp.find(id='dvSH')
-        tr_elements = d_sh.find_all('tr')
-        td_elements = tr_elements[1].find_all('td')
-        return [td_elements[0].text.strip(), td_elements[1].text.strip()]
-    except:
-        pass
-    return ['', '0%']
+    d_sh = serp.find(id='dvSH')
+    tr_elements = d_sh.find_all('tr')
+    td_elements = tr_elements[1].find_all('td')
+    return [td_elements[0].text.strip(), td_elements[1].text.strip()]
